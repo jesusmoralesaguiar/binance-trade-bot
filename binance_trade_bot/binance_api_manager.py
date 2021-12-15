@@ -1,3 +1,4 @@
+import json
 import math
 import time
 import traceback
@@ -268,14 +269,24 @@ class BinanceAPIManager:
         order_guard = self.stream_manager.acquire_order_guard()
         while order is None:
             try:
+                # prince=f"{from_coin_price:.9f}"
+                x = self.binance_client.get_symbol_ticker(symbol = origin_symbol + target_symbol)
                 order = self.binance_client.order_limit_buy(
-                    symbol=origin_symbol + target_symbol,
+                    # symbol=origin_symbol + target_symbol,
+                    symbol=x['symbol'],
                     quantity=order_quantity,
-                    price=from_coin_price,
+                    # prince='{:0.0{}f}'.format(from_coin_price, '5'),
+                    # price=from_coin_price,
+                    # prince=f"{from_coin_price:.9f}",
+                    price=x['price'],
                 )
                 self.logger.info(order)
             except BinanceAPIException as e:
                 self.logger.info(e)
+                if "MIN_NOTIONAL" or "Invalid quantity " in str(e):
+                    info = self.binance_client.get_symbol_info(x['symbol'])
+                    self.logger.info(json.dumps(info, indent=4))
+                    self.logger.info(f"Necesitas una cantidad minima de: {info['filters'][2]['minQty']}")
                 time.sleep(1)
             except Exception as e:  # pylint: disable=broad-except
                 self.logger.warning(f"Unexpected Error: {e}")
@@ -326,8 +337,9 @@ class BinanceAPIManager:
         order_guard = self.stream_manager.acquire_order_guard()
         while order is None:
             # Should sell at calculated price to avoid lost coin
+            x = self.binance_client.get_symbol_ticker(symbol=origin_symbol + target_symbol)
             order = self.binance_client.order_limit_sell(
-                symbol=origin_symbol + target_symbol, quantity=order_quantity, price=from_coin_price
+                symbol=origin_symbol + target_symbol, quantity=order_quantity, price=x['price']
             )
 
         self.logger.info("order")

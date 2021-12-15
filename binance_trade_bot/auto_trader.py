@@ -28,7 +28,7 @@ class AutoTrader:
         balance = self.manager.get_currency_balance(pair.from_coin.symbol)
         from_coin_price = self.manager.get_ticker_price(pair.from_coin + self.config.BRIDGE)
 
-        if balance and balance * from_coin_price > self.manager.get_min_notional(
+        if balance and balance * from_coin_price > self.manager.get_min_notional(  # TODO: QUE COÑO ES ESTO
             pair.from_coin.symbol, self.config.BRIDGE.symbol
         ):
             can_sell = True
@@ -123,19 +123,13 @@ class AutoTrader:
             # Obtain (current coin)/(optional coin)
             coin_opt_coin_ratio = coin_price / optional_coin_price
 
-            # Fees
-            from_fee = self.manager.get_fee(pair.from_coin, self.config.BRIDGE, True)
-            to_fee = self.manager.get_fee(pair.to_coin, self.config.BRIDGE, False)
-            transaction_fee = from_fee + to_fee - from_fee * to_fee
+            transaction_fee = self.manager.get_fee(pair.from_coin, self.config.BRIDGE, True) + self.manager.get_fee(
+                pair.to_coin, self.config.BRIDGE, False
+            )
 
-            if self.config.USE_MARGIN == "yes":
-                ratio_dict[pair] = (
-                    (1 - transaction_fee) * coin_opt_coin_ratio / pair.ratio - 1 - self.config.SCOUT_MARGIN / 100
-                )
-            else:
-                ratio_dict[pair] = (
-                    coin_opt_coin_ratio - transaction_fee * self.config.SCOUT_MULTIPLIER * coin_opt_coin_ratio
-                ) - pair.ratio
+            ratio_dict[pair] = (
+                coin_opt_coin_ratio - transaction_fee * self.config.SCOUT_MULTIPLIER * coin_opt_coin_ratio
+            ) - pair.ratio
         return ratio_dict
 
     def _jump_to_best_coin(self, coin: Coin, coin_price: float):
@@ -152,6 +146,8 @@ class AutoTrader:
             best_pair = max(ratio_dict, key=ratio_dict.get)
             self.logger.info(f"Will be jumping from {coin} to {best_pair.to_coin_id}")
             self.transaction_through_bridge(best_pair)
+        else:
+            self.logger.info(f"No tenemos ratios de {coin}")
 
     def bridge_scout(self):
         """

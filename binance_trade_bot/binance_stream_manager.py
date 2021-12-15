@@ -72,9 +72,11 @@ class BinanceStreamManager:
         self.bw_api_manager = BinanceWebSocketApiManager(
             output_default="UnicornFy", enable_stream_signal_buffer=True, exchange=f"binance.{config.BINANCE_TLD}"
         )
+        # 24hr rolling window mini-ticker statistics
         self.bw_api_manager.create_stream(
             ["arr"], ["!miniTicker"], api_key=config.BINANCE_API_KEY, api_secret=config.BINANCE_API_SECRET_KEY
         )
+        # Create !userData streams as single streams, because its using a different endpoint and can not get combined with other streams in a multiplexed stream!
         self.bw_api_manager.create_stream(
             ["arr"], ["!userData"], api_key=config.BINANCE_API_KEY, api_secret=config.BINANCE_API_SECRET_KEY
         )
@@ -123,7 +125,10 @@ class BinanceStreamManager:
             if self.bw_api_manager.is_manager_stopping():
                 sys.exit()
 
+            # Get oldest or latest entry from stream_buffer and remove from FIFO/LIFO stack
+            # Al final lo q hacemos es coger los datos del buffer
             stream_signal = self.bw_api_manager.pop_stream_signal_from_stream_signal_buffer()
+            # Get oldest or latest entry from stream_buffer and remove from FIFO/LIFO stack.
             stream_data = self.bw_api_manager.pop_stream_data_from_stream_buffer()
 
             if stream_signal is not False:

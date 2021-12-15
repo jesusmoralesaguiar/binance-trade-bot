@@ -22,7 +22,7 @@ class Logger:
 
         # logging to console
         ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
+        ch.setLevel(logging.DEBUG)
         ch.setFormatter(formatter)
         self.Logger.addHandler(ch)
 
