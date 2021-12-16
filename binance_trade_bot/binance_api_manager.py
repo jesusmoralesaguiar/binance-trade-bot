@@ -283,7 +283,7 @@ class BinanceAPIManager:
                 self.logger.info(order)
             except BinanceAPIException as e:
                 self.logger.info(e)
-                if "MIN_NOTIONAL" or "Invalid quantity " in str(e):
+                if "MIN_NOTIONAL" or "Invalid quantity" in e.message:
                     info = self.binance_client.get_symbol_info(x['symbol'])
                     self.logger.info(json.dumps(info, indent=4))
                     self.logger.info(f"Necesitas una cantidad minima de: {info['filters'][2]['minQty']}")

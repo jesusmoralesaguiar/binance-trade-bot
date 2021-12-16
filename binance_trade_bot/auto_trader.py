@@ -143,7 +143,7 @@ class AutoTrader:
 
         # if we have any viable options, pick the one with the biggest ratio
         if ratio_dict:
-            best_pair = max(ratio_dict, key=ratio_dict.get)
+            best_pair = max(ratio_dict, key=ratio_dict.get)  # TODO: Revisar como funciona key=
             self.logger.info(f"Will be jumping from {coin} to {best_pair.to_coin_id}")
             self.transaction_through_bridge(best_pair)
         else:

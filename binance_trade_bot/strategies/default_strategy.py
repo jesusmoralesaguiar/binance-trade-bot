@@ -63,3 +63,8 @@ class Strategy(AutoTrader):
                 self.logger.info(f"Purchasing {current_coin} to begin trading")
                 self.manager.buy_alt(current_coin, self.config.BRIDGE)
                 self.logger.info("Ready to start trading")
+        else:
+            if self.db.get_current_coin().info()['symbol'] != self.config.CURRENT_COIN_SYMBOL:
+                current_coin_symbol = self.config.CURRENT_COIN_SYMBOL
+                self.logger.info(f"Force current coint to be equal as CURRENT_CON_SYMBOL from config.cfg")
+                self.db.set_current_coin(current_coin_symbol)

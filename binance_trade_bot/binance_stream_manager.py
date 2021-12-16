@@ -37,6 +37,7 @@ class BinanceCache:  # pylint: disable=too-few-public-methods
 
     @contextmanager
     def open_balances(self):
+        # Same as Lock().acquire()
         with self._balances_mutex:
             yield self._balances
 
