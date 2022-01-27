@@ -72,6 +72,7 @@ class Database:
             for from_coin in coins:
                 for to_coin in coins:
                     if from_coin != to_coin:
+                        # self.logger.info(f"Combination: {from_coin}{to_coin}")
                         pair = session.query(Pair).filter(Pair.from_coin == from_coin, Pair.to_coin == to_coin).first()
                         if pair is None:
                             session.add(Pair(from_coin, to_coin))

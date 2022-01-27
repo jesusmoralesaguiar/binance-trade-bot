@@ -54,7 +54,7 @@ class Config:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
         supported_coin_list = [
             coin.strip() for coin in os.environ.get("SUPPORTED_COIN_LIST", "").split() if coin.strip()
         ]
-        # Get supported coin list from supported_coin_list file
+        # Get supported coin list from supported_coin_list.backup file
         if not supported_coin_list and os.path.exists("supported_coin_list"):
             with open("supported_coin_list") as rfh:
                 for line in rfh:

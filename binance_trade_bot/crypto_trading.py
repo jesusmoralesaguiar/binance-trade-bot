@@ -35,10 +35,16 @@ def main():
     logger.info(f"Chosen strategy: {config.STRATEGY}")
 
     logger.info("Creating database schema if it doesn't already exist")
-    ## Retrieve all coin pairs
+    # Retrieve all coin pairs
     # exchange_info = manager.binance_client.get_exchange_info()
+    # symbols_array = []
     # for s in exchange_info['symbols']:
     #     print(s['symbol'])
+    #     with open("supported_coin_list", 'a') as file:
+    #         if s['baseAsset'] not in symbols_array:
+    #             file.writelines(f"{s['baseAsset']}\n")
+    #             symbols_array.append(s['baseAsset'])
+    # symbols_array = list(map(lambda item: item['baseAsset'], exchange_info['symbols']))
     db.create_database()
 
     db.set_coins(config.SUPPORTED_COIN_LIST)

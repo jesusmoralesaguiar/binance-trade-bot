@@ -147,7 +147,7 @@ class AutoTrader:
             self.logger.info(f"Will be jumping from {coin} to {best_pair.to_coin_id}")
             self.transaction_through_bridge(best_pair)
         else:
-            self.logger.info(f"No tenemos ratios de {coin}")
+            self.logger.info(f"No tenemos ratios positivos de {coin}")
 
     def bridge_scout(self):
         """
